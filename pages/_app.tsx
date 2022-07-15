@@ -42,6 +42,8 @@ function AuthLayer({ children }: { children: ReactElement }) {
 
   // Checking for user data
   auth.onAuthStateChanged(user => {
+    if(typeof window === 'undefined') return;
+
     // Handle user is not logged in
     if(!user) {
       return signInWithRedirect(auth, provider);
