@@ -35,10 +35,19 @@ export const Room = () => {
                     description: null,
                     tags: []
                 }
-                await roomRef.set(roomData);
+                roomRef.set(roomData);
+                userRef = await roomRef.collection('users').add({
+                    ...user,
+                    owner: true
+                });
+                userId = userRef.id;
+            } else {
+                userRef = await roomRef.collection('users').add({
+                    ...user,
+                    owner: false
+                });
+                userId = userRef.id;
             }
-            userRef = await roomRef.collection('users').add(user);
-            userId = userRef.id;
         }
         init();
         
@@ -47,6 +56,15 @@ export const Room = () => {
             const userRef = roomRef.collection('users').doc(userId);
             await userRef.delete();
         }
+
+        // Checking if room is empty
+        roomRef.collection('users').onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(async change => {
+                if(change.type === 'removed' && snapshot.empty) {
+                    await roomRef.delete();
+                }
+            })
+        })
 
         // Handling leaving room
         window.addEventListener('beforeunload', leaveRoom);
