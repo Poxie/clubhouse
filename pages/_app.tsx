@@ -3,6 +3,8 @@ import type { AppProps } from 'next/app'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
+import { getAuth, signInWithPopup, GithubAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { ReactElement } from 'react';
 
 // Initializing firebase
 const firebaseConfig = {
@@ -17,6 +19,28 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return(
+    <AuthLayer>
+      <Component {...pageProps} />
+    </AuthLayer>
+  )
 }
+
+function AuthLayer({ children }: { children: ReactElement }) {
+  const provider = new GithubAuthProvider();
+  const auth = getAuth();
+
+  // Checking for user data
+  auth.onAuthStateChanged(user => {
+    // Handle user is not logged in
+    if(!user) {
+      return signInWithRedirect(auth, provider);
+    }
+
+    // Handle user is logged in
+  })
+
+  return children;
+}
+
 export default MyApp
