@@ -5,6 +5,10 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import { getAuth, signInWithPopup, GithubAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { ReactElement } from 'react';
+import { useAppSelector, wrapper } from '../redux/store';
+import { Provider, useDispatch, useStore } from 'react-redux';
+import { setUser } from '../redux/user/actions';
+import { selectUserId } from '../redux/user/hooks';
 
 // Initializing firebase
 const firebaseConfig = {
@@ -19,14 +23,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const store = useStore();
+
   return(
-    <AuthLayer>
-      <Component {...pageProps} />
-    </AuthLayer>
+    <Provider store={store}>
+      <AuthLayer>
+        <Component {...pageProps} />
+      </AuthLayer>
+    </Provider>
   )
 }
 
 function AuthLayer({ children }: { children: ReactElement }) {
+  const dispatch = useDispatch();
+  const userId = useAppSelector(selectUserId);
   const provider = new GithubAuthProvider();
   const auth = getAuth();
 
@@ -38,9 +48,18 @@ function AuthLayer({ children }: { children: ReactElement }) {
     }
 
     // Handle user is logged in
+    if(user.uid !== userId) {
+      const info = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      }
+      dispatch(setUser(info));
+    }
   })
 
   return children;
 }
 
-export default MyApp
+export default wrapper.withRedux(MyApp);
