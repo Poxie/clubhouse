@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectUser } from '../redux/user/hooks';
 import { addRoomMessage, setRoomInfo, setRoomMessages, setRoomUsers } from '../redux/room/actions';
 import { User } from '../redux/user/types';
-import { Message } from '../redux/room/types';
+import { Message, RoomInfo } from '../redux/room/types';
 
 type ConnectionContextType = {
     localStream: MediaStream | null;
@@ -85,6 +85,15 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 })
             }
             getRoomMessages();
+
+            // Updating on room info update
+            const getRoomInfoUpdates = async () => {
+                roomRef.onSnapshot(snapshot => {
+                    const data = snapshot.data();
+                    dispatch(setRoomInfo(data as RoomInfo));
+                })
+            }
+            getRoomInfoUpdates();
         })
 
         // Creating local media stream

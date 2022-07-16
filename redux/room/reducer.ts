@@ -7,7 +7,10 @@ export const roomReducer: RoomReducer = (state=initialState, action) => {
             return {
                 ...state,
                 loading: false,
-                roomInfo: action.payload
+                roomInfo: {
+                    ...state.roomInfo as RoomInfo,
+                    ...action.payload
+                }
             }
         }
         case SET_ROOM_USERS: {
