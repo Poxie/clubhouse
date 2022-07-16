@@ -55,6 +55,12 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 const users: User[] = [];
                 (await usersRef.get()).forEach(user => users.push(user.data() as any));
                 dispatch(setRoomUsers(users));
+
+                // Updating users state on snapshot change
+                usersRef.onSnapshot(snapshot => {
+                    const users = snapshot.docs.map(doc => doc.data() as any);
+                    dispatch(setRoomUsers(users));
+                })
             }
             getRoomUsers();
         })
