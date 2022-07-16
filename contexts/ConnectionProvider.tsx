@@ -9,6 +9,7 @@ import { User } from '../redux/user/types';
 
 type ConnectionContextType = {
     localStream: MediaStream | null;
+    remoteStreams: {[id: string]: MediaStream}
 }
 const ConnectionContext = React.createContext({} as ConnectionContextType);
 
@@ -20,6 +21,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
     const user = useAppSelector(selectUser);
     const dispatch = useAppDispatch();
     const [localStream, setLocalStream] = useState<null | MediaStream>(null);
+    const [remoteStreams, setRemoteStreams] = useState<{[id: string]: MediaStream}>({})
 
     useEffect(() => {
         if(!user?.uid) return;
@@ -80,6 +82,12 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 call.on('stream', remoteStream => {
                     audio.srcObject = remoteStream;
                     document.body.append(audio);
+                    
+                    // Updating remote streams
+                    setRemoteStreams(prev => ({
+                        ...prev,
+                        [call.peer]: remoteStream
+                    }))
                 });
                 
                 // Checking if call is disconnected
@@ -150,7 +158,8 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
     }, [user?.uid, roomId]);
 
     const value = {
-        localStream
+        localStream,
+        remoteStreams
     }
     return(
         <ConnectionContext.Provider value={value}>
