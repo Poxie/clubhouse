@@ -51,7 +51,7 @@ export const RoomUser: React.FC<{
             )}
             <div className={iconClassName}>
                 <Image 
-                    src={photoURL}
+                    src={photoURL || ''}
                     layout={'fill'}
                 />
             </div>

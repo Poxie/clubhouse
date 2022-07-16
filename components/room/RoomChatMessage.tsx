@@ -15,7 +15,7 @@ export const RoomChatMessage: React.FC<{
         <div className={styles['message']}>
             <div className={styles['author-icon']}>
                 <Image 
-                    src={author.photoURL}
+                    src={author.photoURL || ''}
                     layout={'fill'}
                 />
             </div>
