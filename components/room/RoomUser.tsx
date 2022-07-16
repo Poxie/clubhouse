@@ -6,6 +6,7 @@ import hark from 'hark';
 import { useAppSelector } from '../../redux/store';
 import { selectUserId } from '../../redux/user/hooks';
 import { selectRoomUser } from '../../redux/room/hooks';
+import { MutedIcon } from '../../assets/MutedIcon';
 
 export const RoomUser: React.FC<{
     uid: string;
@@ -30,7 +31,7 @@ export const RoomUser: React.FC<{
     
     // Getting info from user
     if(!user) return null;
-    const { displayName, photoURL } = user;
+    const { displayName, photoURL, muted } = user;
 
     const iconClassName = [
         styles['user-icon'],
@@ -42,6 +43,11 @@ export const RoomUser: React.FC<{
     ].join(' ');
     return(
         <div className={userClassName}>
+            {muted && (
+                <div className={styles['user-status']}>
+                    <MutedIcon />
+                </div>
+            )}
             <div className={iconClassName}>
                 <Image 
                     src={photoURL}

@@ -40,6 +40,7 @@
 .user-container {
     --user-padding: 15px;
     --row-amount: 12;
+    --icon-width: 65px;
     display: grid;
     grid-template-columns: repeat(var(--row-amount), 1fr);
     margin-left: calc(-1 * var(--user-padding));
@@ -51,6 +52,7 @@
     padding: var(--user-padding);
     cursor: pointer;
     border-radius: var(--border-radius-secondary);
+    position: relative;
 
     &:hover {
         background-color: var(--background-tertiary);
@@ -61,9 +63,24 @@
         }
     }
 }
+.user-status {
+    position: absolute;
+    z-index: 1;
+    top: calc(var(--icon-width) - 14px);
+    right: 12px;
+
+    svg {
+        width: 30px;
+        height: 30px;
+        fill: var(--text-primary);
+        background-color: var(--color-primary);
+        padding: 6px;
+        border-radius: 50%;
+    }
+}
 .user-icon {
-    width: 65px;
-    height: 65px;
+    width: var(--icon-width);
+    height: var(--icon-width);
     border-radius: 50%;
     overflow: hidden;
     position: relative;
