@@ -5,7 +5,6 @@ import { ReactElement } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectUser } from '../redux/user/hooks';
 import { setRoomInfo, setRoomUsers } from '../redux/room/actions';
-import { selectRoomLoading } from '../redux/room/hooks';
 import { User } from '../redux/user/types';
 
 type ConnectionContextType = {
@@ -15,8 +14,8 @@ const ConnectionContext = React.createContext({} as ConnectionContextType);
 
 export const useConnection = () => React.useContext(ConnectionContext);
 
-const db = firebase.firestore();
 export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ children }) => {
+    const db = firebase.firestore();
     const { roomId } = useRouter().query as { roomId: string };
     const user = useAppSelector(selectUser);
     const dispatch = useAppDispatch();

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { RoomHeader } from './RoomHeader';
+import styles from '../../styles/Room.module.scss';
+import { RoomChat } from './RoomChat';
+import { RoomMain } from './RoomMain';
 
 export const Room = () => {
     return(
-        <>
-        <RoomHeader />
-        </>
+        <div className={styles['container']}>
+            <RoomMain />
+            <RoomChat />
+        </div>
     )
 }
