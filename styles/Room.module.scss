@@ -171,15 +171,40 @@
         background-color: var(--background-primary);
     }
 }
+.chat {
+    form {
+        display: flex;
+        align-items: center;
+        background-color: var(--background-tertiary);
+        border-radius: var(--border-radius-secondary);
+    }
+}
 .chat-input {
     width: 100%;
     padding: 12px;
-    background-color: var(--background-tertiary);
     border: none;
+    background-color: transparent;
     outline: none;
-    border-radius: var(--border-radius-secondary);
     font-size: 14px;
     color: var(--text-secondary);
+}
+.chat-button {
+    background-color: var(--color-primary);
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    border-radius: var(--border-radius-secondary);
+    padding: 8px 10px;
+    margin-right: 5px;
+    font-weight: 600;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+
+    svg {
+        width: 15px;
+        fill: var(--text-primary);
+    }
 }
 .message {
     display: flex;

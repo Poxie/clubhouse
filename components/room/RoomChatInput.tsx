@@ -5,6 +5,7 @@ import { selectRoomHeader } from '../../redux/room/hooks';
 import { useAppSelector } from '../../redux/store';
 import { useRouter } from 'next/router';
 import { selectUser } from '../../redux/user/hooks';
+import { SendIcon } from '../../assets/icons/SendIcon';
 
 const db = firebase.firestore();
 export const RoomChatInput = () => {
@@ -37,6 +38,12 @@ export const RoomChatInput = () => {
                 className={styles['chat-input']}
                 onChange={e => setValue(e.target.value)}
             />
+            <button 
+                type={'submit'} 
+                className={styles['chat-button']}
+            >
+                Send <SendIcon />
+            </button>
         </form>
     )
 }
