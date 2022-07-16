@@ -20,7 +20,7 @@ export const RoomControls = () => {
     if(!user) return null;
 
     // Getting user states
-    let { muted, deafened } = user;
+    let { muted, deafened, speaker } = user;
 
     // Muting yourself
     const mute = (muted: boolean) => {
@@ -33,12 +33,14 @@ export const RoomControls = () => {
     }
     return(
         <div className={styles['controls']}>
-            <RoomControl 
-                active={muted} 
-                onChange={mute}
-            >
-                {muted ? <MutedIcon /> : <MicIcon />}
-            </RoomControl>
+            {speaker && (
+                <RoomControl 
+                    active={muted} 
+                    onChange={mute}
+                >
+                    {muted ? <MutedIcon /> : <MicIcon />}
+                </RoomControl>
+            )}
             <RoomControl
                 active={deafened}
                 onChange={deafen}
