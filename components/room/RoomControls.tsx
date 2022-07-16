@@ -55,12 +55,14 @@ export const RoomControls: React.FC<{
             >
                 {deafened ? <DeafenedIcon /> : <HeadphonesIcon />}
             </RoomControl>
-            <RoomControl 
-                active={hasRequestedToSpeak || hasRequestToSpeakModal} 
-                onChange={owner ? toggleRequestToSpeakModal : requestToSpeak }
-            >
-                <HandIcon />
-            </RoomControl>
+            {(owner || !speaker) && (
+                <RoomControl 
+                    active={hasRequestedToSpeak || hasRequestToSpeakModal} 
+                    onChange={owner ? toggleRequestToSpeakModal : requestToSpeak }
+                >
+                    <HandIcon />
+                </RoomControl>
+            )}
         </div>
     )
 }
