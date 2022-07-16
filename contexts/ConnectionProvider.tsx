@@ -70,6 +70,19 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
         navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
             setLocalStream(stream);
 
+            // Listening for events to update audio
+            usersRef.doc(user?.uid).onSnapshot(snaphot => {
+                const data = snaphot.data() as User;
+                if(!data) return;
+
+                // Updating muted state for user
+                if(data.muted) {
+                    stream.getAudioTracks().forEach(track => track.enabled = false);
+                } else {
+                    stream.getAudioTracks().forEach(track => track.enabled = true);
+                }
+            })
+
             peer.on('call', call => {
                 if(call.peer === user?.uid) return;
 

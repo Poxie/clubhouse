@@ -10,6 +10,7 @@ export type User = {
     email: string | null;
     displayName: string | null;
     photoURL: string | null;
+    muted: boolean;
 }
 export type UserState = typeof initialState;
 export type UserReducer = (
