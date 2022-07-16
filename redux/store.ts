@@ -2,6 +2,7 @@ import { $CombinedState, configureStore } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import reducer from "./reducer";
+import { RoomState } from "./room/types";
 import { UserState } from "./user/types";
 
 // Creating store
@@ -14,6 +15,7 @@ export type RootState = {
     readonly [$CombinedState]?: undefined;
 } & {
     user: UserState;
+    room: RoomState;
 }
 export type AppDispatch = Store['dispatch'];
 

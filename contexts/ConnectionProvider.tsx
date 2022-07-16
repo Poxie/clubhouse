@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
-import { useAppSelector } from '../redux/store';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectUser } from '../redux/user/hooks';
+import { setRoomInfo } from '../redux/room/actions';
+import { selectRoomLoading } from '../redux/room/hooks';
 
 type ConnectionContextType = {
     localStream: MediaStream | null;
@@ -16,6 +18,7 @@ const db = firebase.firestore();
 export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ children }) => {
     const { roomId } = useRouter().query as { roomId: string };
     const user = useAppSelector(selectUser);
+    const dispatch = useAppDispatch();
     const [localStream, setLocalStream] = useState<null | MediaStream>(null);
 
     useEffect(() => {
@@ -32,7 +35,8 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
 
         peer.on('open', async id => {
             // If room does not exist, create one
-            if(!(await roomRef.get()).exists) {
+            let roomData = await roomRef.get();
+            if(!roomData.exists) {
                 const roomInfo = {
                     name: roomId,
                     description: null,
@@ -41,6 +45,9 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 roomRef.set(roomInfo);
             }
             await usersRef.doc(user?.uid).set(user);
+            
+            // Updating redux room state
+            dispatch(setRoomInfo(roomData.data() as any));
         })
 
         // Creating local media stream
