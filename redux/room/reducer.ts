@@ -1,5 +1,5 @@
 import initialState from "./initialState";
-import { RESET_ROOM_INFO, RoomReducer, SET_ROOM_INFO } from "./types";
+import { RESET_ROOM_INFO, RoomInfo, RoomReducer, SET_ROOM_INFO, SET_ROOM_USERS } from "./types";
 
 export const roomReducer: RoomReducer = (state=initialState, action) => {
     switch(action.type) {
@@ -8,6 +8,15 @@ export const roomReducer: RoomReducer = (state=initialState, action) => {
                 ...state,
                 loading: false,
                 roomInfo: action.payload
+            }
+        }
+        case SET_ROOM_USERS: {
+            return {
+                ...state,
+                roomInfo: {
+                    ...state.roomInfo as RoomInfo,
+                    users: (action.payload || [])
+                }
             }
         }
         case RESET_ROOM_INFO: {

@@ -2,8 +2,9 @@ import { User } from "../user/types";
 import initialState from "./initialState";
 
 // Action constants
-export type ACTION_TYPE = 'SET_ROOM_INFO' | 'RESET_ROOM_INFO';
+export type ACTION_TYPE = 'SET_ROOM_INFO' | 'SET_ROOM_USERS' | 'RESET_ROOM_INFO';
 export const SET_ROOM_INFO: ACTION_TYPE = 'SET_ROOM_INFO';
+export const SET_ROOM_USERS: ACTION_TYPE = 'SET_ROOM_USERS';
 export const RESET_ROOM_INFO: ACTION_TYPE = 'RESET_ROOM_INFO';
 
 // Room state types

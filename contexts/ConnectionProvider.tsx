@@ -4,8 +4,9 @@ import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectUser } from '../redux/user/hooks';
-import { setRoomInfo } from '../redux/room/actions';
+import { setRoomInfo, setRoomUsers } from '../redux/room/actions';
 import { selectRoomLoading } from '../redux/room/hooks';
+import { User } from '../redux/user/types';
 
 type ConnectionContextType = {
     localStream: MediaStream | null;
@@ -48,6 +49,14 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
             
             // Updating redux room state
             dispatch(setRoomInfo(roomData.data() as any));
+
+            // Getting room users
+            const getRoomUsers = async () => {
+                const users: User[] = [];
+                (await usersRef.get()).forEach(user => users.push(user.data() as any));
+                dispatch(setRoomUsers(users));
+            }
+            getRoomUsers();
         })
 
         // Creating local media stream
