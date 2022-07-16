@@ -82,7 +82,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 if(!data) return;
 
                 // Updating muted state for user
-                if(data.muted) {
+                if(data.muted || !data.speaker) {
                     stream.getAudioTracks().forEach(track => track.enabled = false);
                 } else {
                     stream.getAudioTracks().forEach(track => track.enabled = true);
