@@ -13,6 +13,7 @@ export type User = {
     muted: boolean;
     deafened: boolean;
     owner: boolean;
+    speaker: boolean;
 }
 export type UserState = typeof initialState;
 export type UserReducer = (

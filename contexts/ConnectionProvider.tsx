@@ -38,7 +38,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
         peer.on('open', async id => {
             // If room does not exist, create one
             let roomData = await roomRef.get();
-            let userData = {...user, owner: false};
+            let userData = {...user, owner: false, speaker: false};
             if(!roomData.exists) {
                 const roomInfo = {
                     name: roomId,
@@ -48,7 +48,8 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 roomRef.set(roomInfo);
                 userData = {
                     ...userData,
-                    owner: true
+                    owner: true,
+                    speaker: true
                 }
             }
             await usersRef.doc(user?.uid).set(userData);

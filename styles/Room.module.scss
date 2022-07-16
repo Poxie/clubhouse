@@ -13,13 +13,14 @@
     }
 }
 .main {
-    --padding-main: 35px;
+    --padding-main: 30px;
     padding: var(--padding-main);
     width: 920px;
     max-width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 .header {
     padding-bottom: var(--padding-main);
@@ -36,7 +37,9 @@
     }
 }
 .user-group {
-    height: 100%;
+    border-bottom: 2px solid var(--background-tertiary);
+    padding-bottom: var(--padding-main);
+    margin-bottom: var(--padding-main);
 }
 .group-title {
     font-size: 14px;
@@ -49,6 +52,7 @@
     --user-padding: 15px;
     --row-amount: 12;
     --icon-width: 65px;
+    --controls-height: 42px;
     display: grid;
     grid-template-columns: repeat(var(--row-amount), 1fr);
     margin-left: calc(-1 * var(--user-padding));
@@ -104,6 +108,9 @@
     display: flex;
     justify-content: center;
     gap: 15px;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--background-secondary);
 }
 .control-button {
     width: 42px;
