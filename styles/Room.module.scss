@@ -55,6 +55,11 @@
     &:hover {
         background-color: var(--background-tertiary);
     }
+    &.is-me {
+        .user-icon.talking {
+            border-color: #585eff;
+        }
+    }
 }
 .user-icon {
     width: 65px;

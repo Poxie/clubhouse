@@ -12,27 +12,32 @@ export const RoomUser: React.FC<{
     photoURL: string;
 }> = ({ uid, displayName, photoURL }) => {
     const userId = useAppSelector(selectUserId);
+    const isMe = userId === uid;
     const [talking, setTalking] = useState(false);
     const { remoteStreams, localStream } = useConnection();
     const remoteStream = remoteStreams[uid];
 
     // Determining if user is speaking
     useEffect(() => {
-        const stream = userId === uid ? localStream : remoteStream;
+        const stream = isMe ? localStream : remoteStream;
         if(!stream) return;
 
         const speechEvents = hark(stream);
 
         speechEvents.on('speaking', () => setTalking(true));
         speechEvents.on('stopped_speaking', () => setTalking(false));
-    }, [remoteStream, localStream]);
+    }, [remoteStream, localStream, isMe]);
     
     const iconClassName = [
         styles['user-icon'],
         talking ? styles['talking'] : ''
     ].join(' ');
+    const userClassName = [
+        styles['user'],
+        isMe ? styles['is-me'] : ''
+    ].join(' ');
     return(
-        <div className={styles['user']}>
+        <div className={userClassName}>
             <div className={iconClassName}>
                 <Image 
                     src={photoURL}
