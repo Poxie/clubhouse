@@ -5,14 +5,14 @@ import styles from '../../styles/Room.module.scss';
 import hark from 'hark';
 import { useAppSelector } from '../../redux/store';
 import { selectUserId } from '../../redux/user/hooks';
+import { selectRoomUser } from '../../redux/room/hooks';
 
 export const RoomUser: React.FC<{
     uid: string;
-    displayName: string;
-    photoURL: string;
-}> = ({ uid, displayName, photoURL }) => {
+}> = ({ uid }) => {
     const userId = useAppSelector(selectUserId);
     const isMe = userId === uid;
+    const user = useAppSelector(state => selectRoomUser(state, uid));
     const [talking, setTalking] = useState(false);
     const { remoteStreams, localStream } = useConnection();
     const remoteStream = remoteStreams[uid];
@@ -28,6 +28,10 @@ export const RoomUser: React.FC<{
         speechEvents.on('stopped_speaking', () => setTalking(false));
     }, [remoteStream, localStream, isMe]);
     
+    // Getting info from user
+    if(!user) return null;
+    const { displayName, photoURL } = user;
+
     const iconClassName = [
         styles['user-icon'],
         talking ? styles['talking'] : ''

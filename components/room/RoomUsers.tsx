@@ -1,23 +1,21 @@
 import React from 'react';
 import styles from '../../styles/Room.module.scss';
-import { selectRoomUsers } from '../../redux/room/hooks';
+import { selectRoomUserIds } from '../../redux/room/hooks';
 import { useAppSelector } from '../../redux/store';
 import { RoomUser } from './RoomUser';
 
 export const RoomUsers = () => {
-    const users = useAppSelector(selectRoomUsers);
+    const userIds = useAppSelector(selectRoomUserIds);
     return(
         <div className={styles['user-group']}>
             <p className={styles['group-title']}>
-                Speakers — {users.length}
+                Speakers — {userIds.length}
             </p>
             <div className={styles['user-container']}>
-                {users.map(user => (
-                    <RoomUser 
-                        displayName={user.displayName || ''}
-                        photoURL={user.photoURL || ''}
-                        uid={user.uid}
-                        key={user.uid}
+                {userIds.map(userId => (
+                    <RoomUser
+                        uid={userId}
+                        key={userId}
                     />
                 ))}
             </div>
