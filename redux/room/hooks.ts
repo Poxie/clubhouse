@@ -26,3 +26,13 @@ export const selectRoomUser = createSelector(
     [selectRoomUsers, selectId],
     (users, id) => users.find(user => user.uid === id)
 );
+
+export const selectRoomMessages = (state: RootState) => state.room.roomInfo?.messages || [];
+export const selectRoomMessageIds = createSelector(
+    [selectRoomMessages],
+    messages => messages.map(message => message.id)
+);
+export const selectRoomMessage = createSelector(
+    [selectRoomMessages, selectId],
+    (messages, messageId) => messages.find(message => message.id === messageId)
+);

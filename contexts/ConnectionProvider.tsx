@@ -4,8 +4,9 @@ import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectUser } from '../redux/user/hooks';
-import { setRoomInfo, setRoomUsers } from '../redux/room/actions';
+import { addRoomMessage, setRoomInfo, setRoomMessages, setRoomUsers } from '../redux/room/actions';
 import { User } from '../redux/user/types';
+import { Message } from '../redux/room/types';
 
 type ConnectionContextType = {
     localStream: MediaStream | null;
@@ -27,6 +28,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
         if(!user?.uid) return;
         const roomRef = db.collection('rooms').doc(roomId);
         const usersRef = roomRef.collection('users');
+        const messagesRef = roomRef.collection('messages');
 
         const Peer = require('peerjs').default;
         const peer = new Peer(user?.uid, {
@@ -60,16 +62,29 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
             // Getting room users
             const getRoomUsers = async () => {
                 const users: User[] = [];
-                (await usersRef.get()).forEach(user => users.push(user.data() as any));
+                (await usersRef.get()).forEach(user => users.push(user.data() as User));
                 dispatch(setRoomUsers(users));
 
                 // Updating users state on snapshot change
                 usersRef.onSnapshot(snapshot => {
-                    const users = snapshot.docs.map(doc => doc.data() as any);
+                    const users = snapshot.docs.map(doc => doc.data() as User);
                     dispatch(setRoomUsers(users));
                 })
             }
             getRoomUsers();
+
+            // Getting room messages
+            const getRoomMessages = async () => {
+                // Updating messages state on snapshot change
+                messagesRef.onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if(change.type === 'added') {
+                            dispatch(addRoomMessage(change.doc.data() as Message));
+                        }
+                    })
+                })
+            }
+            getRoomMessages();
         })
 
         // Creating local media stream
