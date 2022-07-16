@@ -81,6 +81,23 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                 } else {
                     stream.getAudioTracks().forEach(track => track.enabled = true);
                 }
+                // Updating deafen state for user
+                if(data.deafened) {
+                    setRemoteStreams(streams => {
+                        Object.values(streams).forEach(stream => {
+                            stream.getAudioTracks().forEach(track => track.enabled = false);
+                            stream.getAudioTracks().forEach(track => console.log(track.enabled));
+                        })
+                        return streams;
+                    })
+                } else {
+                    setRemoteStreams(streams => {
+                        Object.values(streams).forEach(stream => {
+                            stream.getAudioTracks().forEach(track => track.enabled = true);
+                        });
+                        return streams;
+                    })
+                }
             })
 
             peer.on('call', call => {
@@ -91,9 +108,12 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
 
                 // Creating user audio
                 const audio = document.createElement('audio');
+                audio.setAttribute('data-user-id', call.peer);
                 audio.autoplay = true;
                 call.on('stream', remoteStream => {
                     audio.srcObject = remoteStream;
+                    if(document.body.querySelector(`[data-user-id="${call.peer}"]`)) return;
+
                     document.body.append(audio);
                     
                     // Updating remote streams
@@ -131,28 +151,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
             if(id === user?.uid) return;
 
             // Calling user
-            const call = peer.call(id, stream);
-            if(!call) return;
-
-            // Creating audio stream on new stream
-            const audio = document.createElement('audio');
-            audio.autoplay = true;
-            call.on('stream', stream => {
-                audio.srcObject = stream;
-                document.body.append(audio);
-            })
-
-            // Checking if call is disconnected
-            usersRef.onSnapshot(snapshot => {
-                snapshot.docChanges().forEach(change => {
-                    if(change.type === 'removed') {
-                        const id = change.doc.data()?.uid;
-                        if(id === call.peer) {
-                            audio.remove();
-                        }
-                    }
-                })
-            })
+            peer.call(id, stream);
         }
 
         // Leaving room

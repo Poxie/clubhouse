@@ -24,7 +24,7 @@ export const RoomControls = () => {
 
     // Muting yourself
     const mute = (muted: boolean) => {
-        deafened = deafened && muted;
+        deafened = (deafened || false) && muted;
         userRef.update({ muted, deafened });
     }
     // Deafeaning yourself
