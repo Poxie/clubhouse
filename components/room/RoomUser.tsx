@@ -7,6 +7,7 @@ import { useAppSelector } from '../../redux/store';
 import { selectUserId } from '../../redux/user/hooks';
 import { selectRoomUser } from '../../redux/room/hooks';
 import { MutedIcon } from '../../assets/icons/MutedIcon';
+import { DeafenedIcon } from '../../assets/icons/DeafenedIcon';
 
 export const RoomUser: React.FC<{
     uid: string;
@@ -31,7 +32,7 @@ export const RoomUser: React.FC<{
     
     // Getting info from user
     if(!user) return null;
-    const { displayName, photoURL, muted } = user;
+    const { displayName, photoURL, muted, deafened } = user;
 
     const iconClassName = [
         styles['user-icon'],
@@ -43,9 +44,9 @@ export const RoomUser: React.FC<{
     ].join(' ');
     return(
         <div className={userClassName}>
-            {muted && (
+            {(muted || deafened) && (
                 <div className={styles['user-status']}>
-                    <MutedIcon />
+                    {deafened ? <DeafenedIcon /> : <MutedIcon />}
                 </div>
             )}
             <div className={iconClassName}>
