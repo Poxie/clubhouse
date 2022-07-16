@@ -11,6 +11,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.3",
     "firebase": "^9.9.0",
+    "hark": "^1.2.3",
     "next": "12.2.2",
     "next-redux-wrapper": "^7.0.5",
     "peerjs": "^1.4.6",
@@ -22,6 +23,7 @@
     "sass": "^1.53.0"
   },
   "devDependencies": {
+    "@types/hark": "^1.2.2",
     "@types/react": "18.0.15",
     "eslint": "8.19.0",
     "eslint-config-next": "12.2.2",
