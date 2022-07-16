@@ -12,6 +12,7 @@ export type User = {
     photoURL: string | null;
     muted: boolean;
     deafened: boolean;
+    owner: boolean;
 }
 export type UserState = typeof initialState;
 export type UserReducer = (

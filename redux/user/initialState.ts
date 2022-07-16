@@ -1,4 +1,4 @@
-import { User } from "firebase/auth";
+import { User } from "./types";
 
 export default {
     user: null,

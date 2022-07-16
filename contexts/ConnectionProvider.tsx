@@ -38,6 +38,7 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
         peer.on('open', async id => {
             // If room does not exist, create one
             let roomData = await roomRef.get();
+            let userData = {...user, owner: false};
             if(!roomData.exists) {
                 const roomInfo = {
                     name: roomId,
@@ -45,8 +46,12 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
                     createdAt: Date.now()
                 };
                 roomRef.set(roomInfo);
+                userData = {
+                    ...userData,
+                    owner: true
+                }
             }
-            await usersRef.doc(user?.uid).set(user);
+            await usersRef.doc(user?.uid).set(userData);
             
             // Updating redux room state
             dispatch(setRoomInfo(roomData.data() as any));
@@ -155,10 +160,16 @@ export const ConnectionProvider: React.FC<{children: ReactElement}> = ({ childre
         }
 
         // Leaving room
-        const leaveRoom = () => {
+        const leaveRoom = async () => {
             usersRef.doc(user?.uid).delete();
             peer.destroy();
             document.querySelectorAll('audio').forEach(element => element.remove());
+
+            // If room is empty, destroy room
+            const userLength = (await usersRef.get()).docs.length;
+            if(userLength <= 0) {
+                await roomRef.delete();
+            }
         }
 
         // Handling user leaving room
