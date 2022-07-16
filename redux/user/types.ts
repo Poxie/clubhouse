@@ -14,6 +14,7 @@ export type User = {
     deafened: boolean;
     owner: boolean;
     speaker: boolean;
+    requestToSpeak: boolean;
 }
 export type UserState = typeof initialState;
 export type UserReducer = (

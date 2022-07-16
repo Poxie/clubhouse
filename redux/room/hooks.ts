@@ -36,3 +36,9 @@ export const selectRoomMessage = createSelector(
     [selectRoomMessages, selectId],
     (messages, messageId) => messages.find(message => message.id === messageId)
 );
+
+export const selectRequestingToSpeak = (state: RootState) => state.room.roomInfo?.users.filter(user => user.requestToSpeak) || [];
+export const selectRequestingToSpeakIds = createSelector(
+    [selectRequestingToSpeak],
+    users => users.map(user => user.uid)
+)

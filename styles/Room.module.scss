@@ -16,6 +16,9 @@
     --padding-main: 30px;
     width: 920px;
     max-width: 100%;
+    display: flex;
+}
+.main-view {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -158,6 +161,56 @@
     &.active, &:hover {
         background-color: var(--color-primary);
     }
+}
+.request-to-speak {
+    --padding-main: 18px;
+    width: 420px;
+    border-left: 2px solid var(--background-tertiary);
+}
+.request-to-speak-header {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding: var(--padding-main);
+}
+.request-to-speak-user {
+    padding: 0 var(--padding-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.request-to-speak-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.request-to-speak-user-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+.request-to-speak-options {
+    display: flex;
+    gap: 10px;
+    
+    svg {
+        width: 25px;
+        fill: var(--text-secondary);
+        background-color: var(--background-tertiary);
+        padding: 5px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: block;
+    }
+}
+.request-to-speak-empty {
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 0 var(--padding-main);
+    display: block;
 }
 
 .chat {
