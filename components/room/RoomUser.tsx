@@ -6,7 +6,7 @@ import hark from 'hark';
 import { useAppSelector } from '../../redux/store';
 import { selectUserId } from '../../redux/user/hooks';
 import { selectRoomUser } from '../../redux/room/hooks';
-import { MutedIcon } from '../../assets/MutedIcon';
+import { MutedIcon } from '../../assets/icons/MutedIcon';
 
 export const RoomUser: React.FC<{
     uid: string;
