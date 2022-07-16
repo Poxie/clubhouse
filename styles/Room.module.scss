@@ -116,8 +116,8 @@
     background-color: var(--background-secondary);
 }
 .control-button {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -127,8 +127,8 @@
     cursor: pointer;
 
     svg {
-        width: 20px;
-        height: 20px;
+        width: 23px;
+        height: 23px;
         fill: var(--text-primary);
     }
     &.active, &:hover {
@@ -200,6 +200,7 @@
     display: flex;
     gap: 6px;
     align-items: center;
+    cursor: pointer;
 
     svg {
         width: 15px;
