@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import { useRouter } from 'next/router';
 import { useAppSelector } from '../../redux/store';
@@ -6,73 +6,122 @@ import { selectUser } from '../../redux/user/hooks';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { getAuth } from 'firebase/auth';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
 const db = firebase.firestore();
 
 export const Room = () => {
     const { roomId } = useRouter().query as { roomId: string };
     const user = useAppSelector(selectUser);
-    const roomRef = db.collection('rooms').doc(roomId);
-    const usersRef = roomRef.collection('users').limit(100);
-    const [users] = useCollectionData(usersRef as any);
-    
+
     useEffect(() => {
         if(!user?.uid) return;
+        const roomRef = db.collection('rooms').doc(roomId);
+        const usersRef = roomRef.collection('users');
 
-        // Handling joining room
-        let userId: string;
-        const init = async () => {
-            // Fetch room data
-            const roomRef = db.collection('rooms').doc(roomId);
-            const roomData = await roomRef.get();
+        const Peer = require('peerjs').default;
+        const peer = new Peer(user?.uid, {
+            host: process.env.NEXT_PUBLIC_PEER_HOST,
+            port: parseInt(process.env.NEXT_PUBLIC_PEER_PORT),
+            path: process.env.NEXT_PUBLIC_PEER_PATH
+        });
 
+        peer.on('open', async id => {
             // If room does not exist, create one
-            let userRef;
-            if(!roomData.exists) {
-                const roomData = {
-                    createdAt: Date.now(),
+            if(!(await roomRef.get()).exists) {
+                const roomInfo = {
                     name: roomId,
                     description: null,
-                    tags: []
-                }
-                roomRef.set(roomData);
-                userRef = await roomRef.collection('users').add({
-                    ...user,
-                    owner: true
-                });
-                userId = userRef.id;
-            } else {
-                userRef = await roomRef.collection('users').add({
-                    ...user,
-                    owner: false
-                });
-                userId = userRef.id;
+                    createdAt: Date.now()
+                };
+                roomRef.set(roomInfo);
             }
-        }
-        init();
-        
-        // Leave room
-        const leaveRoom = async () => {
-            const userRef = roomRef.collection('users').doc(userId);
-            await userRef.delete();
-        }
+            await usersRef.doc(user?.uid).set(user);
+        })
 
-        // Checking if room is empty
-        roomRef.collection('users').onSnapshot(snapshot => {
-            snapshot.docChanges().forEach(async change => {
-                if(change.type === 'removed' && snapshot.empty) {
-                    await roomRef.delete();
-                }
+        // Creating local media stream
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(stream => {
+            peer.on('call', call => {
+                if(call.peer === user?.uid) return;
+
+                // Answering calling user
+                call.answer(stream);
+
+                // Creating user audio
+                const audio = document.createElement('audio');
+                audio.autoplay = true;
+                call.on('stream', remoteStream => {
+                    console.log('hey');
+                    audio.srcObject = remoteStream;
+                    document.body.append(audio);
+                })
+                
+                // Checking if call is disconnected
+                usersRef.onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if(change.type === 'removed') {
+                            const id = change.doc.data()?.uid;
+                            if(id === call.peer) {
+                                audio.remove();
+                            }
+                        }
+                    })
+                })
+            })
+
+            // Checking for user collection changes
+            usersRef.onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if(change.type === 'added') {
+                        connectToUser(change.doc.data()?.uid, stream);
+                    }
+                })
             })
         })
 
-        // Handling leaving room
+        // Connecting to users
+        const connectToUser = (id: string, stream: MediaStream) => {
+            if(id === user?.uid) return;
+
+            // Calling user
+            const call = peer.call(id, stream);
+            if(!call) return;
+
+            // Creating audio stream on new stream
+            const audio = document.createElement('audio');
+            audio.autoplay = true;
+            call.on('stream', stream => {
+                audio.srcObject = stream;
+                document.body.append(audio);
+            })
+
+            // Checking if call is disconnected
+            usersRef.onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if(change.type === 'removed') {
+                        const id = change.doc.data()?.uid;
+                        if(id === call.peer) {
+                            audio.remove();
+                        }
+                    }
+                })
+            })
+        }
+
+        // Leaving room
+        const leaveRoom = () => {
+            usersRef.doc(user?.uid).delete();
+            peer.destroy();
+            document.querySelectorAll('audio').forEach(element => element.remove());
+        }
+
+        // Handling user leaving room
         window.addEventListener('beforeunload', leaveRoom);
         return () => {
             window.removeEventListener('beforeunload', leaveRoom);
             leaveRoom();
         }
-    }, [roomId, user?.uid]);
+    }, [user?.uid, roomId]);
 
     const logout = () => {
         getAuth().signOut();
@@ -80,14 +129,6 @@ export const Room = () => {
     return(
         <div>
             room {roomId}
-            {users?.map(user => {
-                return(
-                    <>
-                    <br />
-                    {user.email}
-                    </>
-                )})
-            }
             <div onClick={logout}>
                 logout
             </div>
