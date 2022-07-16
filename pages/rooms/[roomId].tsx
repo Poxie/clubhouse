@@ -1,6 +1,11 @@
 import React from 'react';
 import { Room } from '../../components/room/Room';
+import { ConnectionProvider } from '../../contexts/ConnectionProvider';
 
 export default function room() {
-    return <Room />;
+    return(
+        <ConnectionProvider>
+            <Room />
+        </ConnectionProvider>
+    );
 }
